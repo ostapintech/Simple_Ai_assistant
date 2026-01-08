@@ -1,0 +1,81 @@
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    height: 100vh;
+}
+.btn {
+    text-align: center;
+    justify-content: center;
+}
+.container {
+    display: flex;
+    height: 100%;
+}
+
+.left, .right {
+    width: 50%;
+    padding: 20px;
+    box-sizing: border-box;
+}
+
+
+textarea {
+    width: 100%;
+    height: 67.5%;
+    resize: none;
+    font-size: 18px;
+    padding: 15px;
+}
+
+button {
+    margin-top: 10px;
+    padding: 10px 20px;
+    font-size: 14px;
+    cursor: pointer;
+}
+
+.result {
+    white-space: pre-wrap;
+    background: #f7f7f7;
+    padding: 15px;
+    height: 67.5%;
+    overflow-y: auto;
+    opacity: 67.5%;
+    border-radius: 25px;
+    font-size: 18px;
+}
+.prompt {
+    opacity: 67.5%;
+    border-radius: 25px;
+}
+
+/* CSS */
+.button-62 {
+  background: linear-gradient(to bottom right, #EF4765, #FF9A5A);
+  border: 0;
+  border-radius: 12px;
+  color: #FFFFFF;
+  cursor: pointer;
+  display: inline-block;
+  font-family: -apple-system,system-ui,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+  font-size: 16px;
+  font-weight: 500;
+  line-height: 2.5;
+  outline: transparent;
+  padding: 0 1rem;
+  text-align: center;
+  text-decoration: none;
+  transition: box-shadow .2s ease-in-out;
+  user-select: none;
+  -webkit-user-select: none;
+  touch-action: manipulation;
+  white-space: nowrap;
+}
+
+.button-62:not([disabled]):focus {
+  box-shadow: 0 0 .25rem rgba(0, 0, 0, 0.5), -.125rem -.125rem 1rem rgba(239, 71, 101, 0.5), .125rem .125rem 1rem rgba(255, 154, 90, 0.5);
+}
+
+.button-62:not([disabled]):hover {
+  box-shadow: 0 0 .25rem rgba(0, 0, 0, 0.5), -.125rem -.125rem 1rem rgba(239, 71, 101, 0.5), .125rem .125rem 1rem rgba(255, 154, 90, 0.5);
+}

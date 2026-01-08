@@ -3,12 +3,10 @@ from pydantic import BaseModel
 from langchain.chat_models import init_chat_model
 from dotenv import load_dotenv
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import JSONResponse
 
 load_dotenv()
 app = FastAPI(title='AI assistant')
 
-# Для локального тесту
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
