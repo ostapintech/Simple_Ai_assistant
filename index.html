@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8" />
+    <title>AI Prompt Processor</title>
+    <style>
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            height: 100vh;
+        }
+
+        .container {
+            display: flex;
+            height: 100%;
+        }
+
+        .left, .right {
+            width: 50%;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+
+        .left {
+            border-right: 1px solid #ddd;
+        }
+
+        textarea {
+            width: 100%;
+            height: 70%;
+            resize: none;
+            font-size: 14px;
+        }
+
+        button {
+            margin-top: 10px;
+            padding: 10px 20px;
+            font-size: 14px;
+            cursor: pointer;
+        }
+
+        .result {
+            white-space: pre-wrap;
+            background: #f7f7f7;
+            padding: 15px;
+            height: 80%;
+            overflow-y: auto;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <!-- Ліва частина -->
+    <div class="left">
+        <h2>Prompt</h2>
+        <textarea id="prompt" placeholder="Введи текст..."></textarea>
+        <br />
+        <button onclick="sendPrompt()">Надіслати</button>
+    </div>
+
+    <!-- Права частина -->
+    <div class="right">
+        <h2>Результат</h2>
+        <div id="result" class="result">Очікую відповідь...</div>
+    </div>
+</div>
+
+<script>
+async function sendPrompt() {
+    const promptText = document.getElementById("prompt").value;
+    const resultDiv = document.getElementById("result");
+
+    if (!promptText.trim()) {
+        resultDiv.textContent = "❗ Введи текст";
+        return;
+    }
+
+    resultDiv.textContent = "⏳ Обробка...";
+
+    try {
+        const response = await fetch("http://0.0.0.0:8000/api/process", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                text: promptText,
+
+            })
+        });
+
+        if (!response.ok) {
+            throw new Error("Помилка сервера");
+        }
+
+        const data = await response.json();
+
+        resultDiv.textContent =
+            "📌 Summary:\n" + data.summary + "\n\n" +
+            "🌍 Translation:\n" + data.translation;
+
+    } catch (error) {
+        resultDiv.textContent = "❌ Помилка: " + error.message;
+    }
+}
+</script>
+
+</body>
+</html>
