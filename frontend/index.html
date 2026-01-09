@@ -6,79 +6,38 @@
     <link rel="stylesheet" href="style.css">
 </head>
 <body id="back-anim">
-<div class="btn">
-    <button class="button-62" role="button" onclick="sendPrompt()">Надіслати</button>
+<div class="voice">
+    <h1>Voice recorder</h1>
+  <div class="btn"><button class="button-62" id="recordBtn">🎙 Start</button></div>
+    <div id="statusMessage" style="margin-top:10px; font-weight:bold;"></div>
 </div>
 <div class="container">
-    <!-- Ліва частина -->
-    <div class="left">
-        <h2>Введіть текст для обробки</h2>
-        <textarea class = "prompt" id="prompt" placeholder="Введи текст..."></textarea>
-    </div>
-
-    <!-- Права частина -->
     <div class="right">
-        <h2>Результат</h2>
-        <div id="result" class="result">Очікую відповідь...</div>
+        <h2>Result
+        <button class="button-62" role="button" onclick="sendPrompt()">Run</button></h2>
+        <div id="result" class="result">Waiting answer...</div>
     </div>
 </div>
 
+<script src="js/api.call.js"></script>
+<script src="js/three.r134.min.js"></script>
+<script src="js/vanta.fog.min.js"></script>
 <script>
-async function sendPrompt() {
-    const promptText = document.getElementById("prompt").value;
-    const resultDiv = document.getElementById("result");
-
-    if (!promptText.trim()) {
-        resultDiv.textContent = "❗ Введи текст";
-        return;
-    }
-
-    resultDiv.textContent = "⏳ Обробка...";
-
-    try {
-        const response = await fetch("http://0.0.0.0:8000/api/process", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify({
-                text: promptText,
-
-            })
-        });
-
-        if (!response.ok) {
-            throw new Error("Помилка сервера");
-        }
-
-        const data = await response.json();
-
-        resultDiv.textContent =
-            "📌 Summary:\n" + data.summary + "\n\n" +
-            "🌍 Translation:\n" + data.translation;
-
-    } catch (error) {
-        resultDiv.textContent = "❌ Помилка: " + error.message;
-    }
-}
+    VANTA.FOG({
+      el: "#back-anim",
+      mouseControls: true,
+      touchControls: true,
+      gyroControls: false,
+      minHeight: 200.00,
+      minWidth: 200.00,
+      highlightColor: 0xedc238,
+      midtoneColor: 0x9125de,
+      lowlightColor: 0x7237cf,
+      blurFactor: 0.27,
+      speed: 0.50,
+      zoom: 0.90
+    })
 </script>
-<script src="three.r134.min.js"></script>
-<script src="vanta.fog.min.js"></script>
-<script>
-VANTA.FOG({
-  el: "#back-anim",
-  mouseControls: true,
-  touchControls: true,
-  gyroControls: false,
-  minHeight: 200.00,
-  minWidth: 200.00,
-  highlightColor: 0xedc238,
-  midtoneColor: 0x9125de,
-  lowlightColor: 0x7237cf,
-  blurFactor: 0.27,
-  speed: 0.50,
-  zoom: 0.90
-})
-</script>
+<script type="module" src="js/wav_record.js"></script>
 </body>
 </html>
