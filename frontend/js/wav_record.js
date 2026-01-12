@@ -113,7 +113,52 @@ async function sendPrompt(textFromAudio) {
     } catch (error) {
         resultDiv.textContent = "❌ Помилка ШІ: " + error.message;
     }
+    loadHistory();
 }
+async function loadHistory() {
+    const historyDiv = document.getElementById("historyList");
+
+    // Показуємо статус завантаження
+    historyDiv.innerHTML = "⏳ Завантаження історії...";
+
+    try {
+        const response = await fetch("http://localhost:8000/api/history");
+
+        if (!response.ok) throw new Error("Не вдалося завантажити історію");
+
+        const historyData = await response.json(); // Отримуємо масив записів
+
+        if (historyData.length === 0) {
+            historyDiv.innerHTML = "Історія порожня.";
+            return;
+        }
+
+        // Очищуємо контейнер перед виводом
+        historyDiv.innerHTML = "";
+
+        // Створюємо картку для кожного запису
+        historyData.forEach(item => {
+            const date = new Date(item.created_at).toLocaleString('uk-UA');
+
+            const card = document.createElement("div");
+            card.className = "history-card";
+            card.innerHTML = `
+                <div style="border: 1px solid #ddd; padding: 10px; margin-bottom: 10px; border-radius: 8px;">
+                    <small style="color: gray;">${date}</small>
+                    <p><b>📌 Summary:</b> ${item.summary}</p>
+                    <p><b>🌍 Переклад:</b> ${item.translation}</p>
+                </div>
+            `;
+            historyDiv.appendChild(card);
+        });
+
+    } catch (error) {
+        historyDiv.innerHTML = "❌ Помилка історії: " + error.message;
+    }
+}
+
+// Викликаємо функцію відразу при завантаженні сторінки
+window.onload = loadHistory;
 // --- WAV encoding ---
 function encodeWAV(buffers, sampleRate) {
     const length = buffers.reduce((sum, b) => sum + b.length, 0);

@@ -6,6 +6,7 @@ from pydantic import BaseModel
 from fastapi import FastAPI, UploadFile, File, HTTPException
 from dotenv import load_dotenv
 from fastapi.middleware.cors import CORSMiddleware
+from database import SessionLocal, TranscriptionEntry, init_db
 
 from ai import AIService
 
@@ -16,6 +17,7 @@ ai_service: AIService = None
 async def lifespan(app: FastAPI):
     global ai_service
     ai_service = AIService()
+    init_db()
 
     yield
 
@@ -50,11 +52,30 @@ async def speech_to_text(file: UploadFile = File(...)):
 def text_processing(prompt: TextSchema):
     input_text = prompt.text
     try:
-        result = ai_service.text_processing(input_text)
-        return result
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=f"AI Error: {str(e)}")
+        results = ai_service.text_processing(input_text)
 
+        db = SessionLocal()
+        new_entry = TranscriptionEntry(
+            cleaned_text=results['transcription'],
+            summary=results['summary'],
+            translation=results['translation']
+        )
+        db.add(new_entry)
+        db.commit()
+        db.refresh(new_entry)
+        db.close()
+
+        return results
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@app.get("/api/history")
+async def get_history():
+    db = SessionLocal()
+    entries = db.query(TranscriptionEntry).order_by(TranscriptionEntry.created_at.desc()).limit(10).all()
+    db.close()
+    return entries
 
 if __name__ == '__main__':
     uvicorn.run("main:app", reload=True, host='0.0.0.0', port=8000)
