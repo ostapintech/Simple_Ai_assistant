@@ -2,4 +2,4 @@
 venv/
 __pycache__/
 .DS_Store
-/ai_project/audio.wav
+audio.wav
