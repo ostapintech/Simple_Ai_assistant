@@ -50,9 +50,10 @@ async function stopRecording() {
     mediaStream.getTracks().forEach(track => track.stop());
 
     const wavBlob = encodeWAV(audioData, audioContext.sampleRate);
-
     const formData = new FormData();
     formData.append("file", wavBlob, "audio.wav");
+
+    statusDiv.textContent = "⏳ Transcribing..."; // Міняємо статус на процес розпізнавання
 
     try {
         const response = await fetch("http://localhost:8000/api/audio", {
@@ -62,13 +63,55 @@ async function stopRecording() {
 
         if (!response.ok) throw new Error("Upload failed");
 
-        statusDiv.textContent = "✅ Audio successfully recordered!";
-        statusDiv.style.color = "green";
-        console.log("Audio sent to backend");
+        // 1. Отримуємо текст від бекенду
+        const data = await response.json();
+        const recognizedText = data.text; // Сервер повертає {"text": "..."}
+
+        console.log("Recognized text:", recognizedText);
+        statusDiv.textContent = "✅ Transcription received!";
+
+        // 2. КЛЮЧОВИЙ КРОК: Передаємо цей текст у функцію обробки
+        // Це той самий ланцюжок, який ми обговорювали
+        sendPrompt(recognizedText);
+
     } catch (err) {
         console.error("Upload failed:", err);
-        statusDiv.textContent = "❌ Audio recording error!";
+        statusDiv.textContent = "❌ Error processing audio!";
         statusDiv.style.color = "red";
+    }
+}
+async function sendPrompt(textFromAudio) {
+    const resultDiv = document.getElementById("result");
+
+    // Якщо тексту немає, не продовжуємо
+    if (!textFromAudio) {
+        resultDiv.textContent = "❌ Немає тексту для обробки";
+        return;
+    }
+
+    resultDiv.textContent = "🤖 ШІ обробляє текст...";
+
+    try {
+        const response = await fetch("http://localhost:8000/api/process", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                text: textFromAudio // Тепер тут точно є рядок, а не undefined
+            })
+        });
+
+        const data = await response.json();
+
+        resultDiv.innerHTML = `
+            <p><b>📝 Оригінал:</b> ${data.transcription}</p>
+            <p><b>📌 Summary:</b> ${data.summary}</p>
+            <p><b>🌍 Переклад:</b> ${data.translation}</p>
+        `;
+
+    } catch (error) {
+        resultDiv.textContent = "❌ Помилка ШІ: " + error.message;
     }
 }
 // --- WAV encoding ---
