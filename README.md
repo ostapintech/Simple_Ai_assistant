@@ -13,6 +13,7 @@ Requirement to speak only Ukrainian
 # Running the App 
 
 1. create .env file:
+   
    Copy there your Groq API key:
    
    GROQ_API_KEY = your_key
