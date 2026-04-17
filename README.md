@@ -14,19 +14,19 @@ Requirement to speak only Ukrainian
 
 1. create .env file:
    
-   Copy there your Groq API key:
+Copy there your Groq API key:
+
+`GROQ_API_KEY = your_key`
    
-   GROQ_API_KEY = your_key
-   
-   And add your postgresql url
-   
-   DATABASE_URL = your_url
+And add your postgresql url:
+
+`DATABASE_URL = your_url`
 
 3. open terminal and install requirements.txt using this command: 
-   ### pip install -r requirements.txt 
+### `pip install -r requirements.txt `
 
 4. run the app with this command:
-   ### python3 main.py
+### ```python3 main.py```
 
 5. open index.html in any one browser
 
